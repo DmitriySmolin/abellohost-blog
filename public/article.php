@@ -23,19 +23,17 @@ if ($article === null) {
     exit('Article not found');
 }
 
-$categoryId = $articleRepository->getCategoryId($articleId);
-
 $articleRepository->incrementViews($articleId);
 
 $article['views']++;
 
-$relatedArticles = $articleRepository->getRelated(
-    $articleId,
-    $categoryId
-);
+$categories = $articleRepository->getCategories($articleId);
+
+$relatedArticles = $articleRepository->getRelated($articleId);
 
 $smarty->assign('title', $article['title']);
 $smarty->assign('article', $article);
 $smarty->assign('relatedArticles', $relatedArticles);
+$smarty->assign('categories', $categories);
 
 $smarty->display('article.tpl');

@@ -21,6 +21,22 @@ class CategoryRepository
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function getWithArticles(): array
+    {
+        $stmt = $this->connection->query(
+            'SELECT c.*
+         FROM categories c
+         WHERE EXISTS (
+             SELECT 1
+             FROM article_category ac
+             WHERE ac.category_id = c.id
+         )
+         ORDER BY c.name'
+        );
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
     public function getById(int $id): ?array
     {
         $stmt = $this->connection->prepare(

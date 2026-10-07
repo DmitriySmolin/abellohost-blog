@@ -12,34 +12,10 @@ $connection = Database::getConnection();
 
 $smarty = require __DIR__ . '/../config/smarty.php';
 
-//$smarty->assign('title', 'Working Smarty!');
-//
-//$smarty->display('home.tpl');
-
 $categoryRepository = new CategoryRepository($connection);
 $articleRepository = new ArticleRepository($connection);
 
-$categories = $categoryRepository->getAll();
-
-//echo '<pre>';
-//print_r($categoryRepository->getAll());
-//echo '</pre>';
-
-//echo '<pre>';
-//
-//foreach ($categories as $category) {
-//    echo $category['name'] . PHP_EOL;
-//
-//    $articles = $articleRepository->getLatestByCategory(
-//        (int) $category['id']
-//    );
-//
-//    print_r($articles);
-//
-//    echo PHP_EOL;
-//}
-//
-//echo '</pre>';
+$categories = $categoryRepository->getWithArticles();
 
 $homepageCategories = [];
 
@@ -57,11 +33,3 @@ foreach ($categories as $category) {
 $smarty->assign('categories', $homepageCategories);
 
 $smarty->display('home.tpl');
-
-echo '<pre>';
-
-print_r(
-    $articleRepository->getById(1)
-);
-
-echo '</pre>';

@@ -18,6 +18,16 @@
 </p>
 <hr>
 <h2>Related articles</h2>
+<img src="{$article.image}" alt="{$article.title}">
+<p>Published: {$article.published_at}</p>
+<p>
+    Categories:
+    {foreach $categories as $category}
+    <a href="/category.php?id={$category.id}">
+        {$category.name}
+        </a>{if !$category@last}, {/if}
+    {/foreach}
+</p>
 <ul>
     {foreach $relatedArticles as $item}
         <li>

@@ -89,10 +89,21 @@ for ($i = 1; $i <= 15; $i++) {
 
     $articleId = (int) $pdo->lastInsertId();
 
+    $categoryId = $categoryIds[($i - 1) % count($categoryIds)];
+
     $relationQuery->execute([
         'article_id' => $articleId,
-        'category_id' => $categoryIds[array_rand($categoryIds)],
+        'category_id' => $categoryId,
     ]);
+
+    if ($i % 4 === 0) {
+        $secondCategoryId = $categoryIds[$i % count($categoryIds)];
+
+        $relationQuery->execute([
+            'article_id' => $articleId,
+            'category_id' => $secondCategoryId,
+        ]);
+    }
 }
 
 echo "Seed completed\n";

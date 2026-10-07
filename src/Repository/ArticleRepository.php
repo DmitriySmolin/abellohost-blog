@@ -13,10 +13,8 @@ class ArticleRepository
     ) {
     }
 
-    public function getLatestByCategory(
-        int $categoryId,
-        int $limit = 3
-    ): array {
+    public function getLatestByCategory(int $categoryId, int $limit = 3): array
+    {
         $stmt = $this->connection->prepare(
             'SELECT a.*
              FROM articles a
@@ -48,13 +46,13 @@ class ArticleRepository
 
         $stmt = $this->connection->prepare(
             "SELECT a.*
-     FROM articles a
-     INNER JOIN article_category ac
-         ON ac.article_id = a.id
-     WHERE ac.category_id = :category_id
-     ORDER BY {$orderBy}
-     LIMIT :limit
-     OFFSET :offset"
+             FROM articles a
+             INNER JOIN article_category ac
+                 ON ac.article_id = a.id
+             WHERE ac.category_id = :category_id
+             ORDER BY {$orderBy}
+             LIMIT :limit
+             OFFSET :offset"
         );
 
         $stmt->bindValue(':category_id', $categoryId, PDO::PARAM_INT);
@@ -70,8 +68,8 @@ class ArticleRepository
     {
         $stmt = $this->connection->prepare(
             'SELECT COUNT(*)
-         FROM article_category
-         WHERE category_id = :category_id'
+             FROM article_category
+             WHERE category_id = :category_id'
         );
 
         $stmt->execute([
@@ -85,8 +83,8 @@ class ArticleRepository
     {
         $stmt = $this->connection->prepare(
             'SELECT *
-         FROM articles
-         WHERE id = :id'
+             FROM articles
+             WHERE id = :id'
         );
 
         $stmt->execute([
@@ -97,72 +95,60 @@ class ArticleRepository
 
         return $article ?: null;
     }
+
     public function incrementViews(int $id): void
     {
         $stmt = $this->connection->prepare(
             'UPDATE articles
-         SET views = views + 1
-         WHERE id = :id'
+             SET views = views + 1
+             WHERE id = :id'
         );
 
         $stmt->execute([
             'id' => $id,
         ]);
     }
-    public function getCategoryId(int $articleId): ?int
+
+    public function getRelated(int $articleId, int $limit = 3): array
     {
         $stmt = $this->connection->prepare(
-            'SELECT category_id
-         FROM article_category
-         WHERE article_id = :article_id
-         LIMIT 1'
+            'SELECT DISTINCT a.*
+             FROM articles a
+             INNER JOIN article_category ac
+                 ON ac.article_id = a.id
+             WHERE ac.category_id IN (
+                 SELECT category_id
+                 FROM article_category
+                 WHERE article_id = :article_id
+             )
+             AND a.id != :current_article_id
+             ORDER BY a.published_at DESC
+             LIMIT :limit'
+        );
+
+        $stmt->bindValue(':article_id', $articleId, PDO::PARAM_INT);
+        $stmt->bindValue(':current_article_id', $articleId, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getCategories(int $articleId): array
+    {
+        $stmt = $this->connection->prepare(
+            'SELECT c.*
+             FROM categories c
+             INNER JOIN article_category ac
+                 ON ac.category_id = c.id
+             WHERE ac.article_id = :article_id
+             ORDER BY c.name'
         );
 
         $stmt->execute([
             'article_id' => $articleId,
         ]);
-
-        $categoryId = $stmt->fetchColumn();
-
-        return $categoryId
-            ? (int) $categoryId
-            : null;
-    }
-    public function getRelated(
-        int $articleId,
-        int $categoryId,
-        int $limit = 3
-    ): array {
-        $stmt = $this->connection->prepare(
-            'SELECT a.*
-         FROM articles a
-         INNER JOIN article_category ac
-             ON ac.article_id = a.id
-         WHERE ac.category_id = :category_id
-           AND a.id != :article_id
-         ORDER BY a.published_at DESC
-         LIMIT :limit'
-        );
-
-        $stmt->bindValue(
-            ':category_id',
-            $categoryId,
-            PDO::PARAM_INT
-        );
-
-        $stmt->bindValue(
-            ':article_id',
-            $articleId,
-            PDO::PARAM_INT
-        );
-
-        $stmt->bindValue(
-            ':limit',
-            $limit,
-            PDO::PARAM_INT
-        );
-
-        $stmt->execute();
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
