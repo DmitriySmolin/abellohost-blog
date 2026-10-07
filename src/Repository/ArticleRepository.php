@@ -13,19 +13,25 @@ class ArticleRepository
     ) {
     }
 
-    public function getLatest(int $limit = 3): array
-    {
+    public function getLatestByCategory(
+        int $categoryId,
+        int $limit = 3
+    ): array {
         $stmt = $this->connection->prepare(
-            'SELECT *
-             FROM articles
-             ORDER BY created_at DESC
+            'SELECT a.*
+             FROM articles a
+             INNER JOIN article_category ac
+                 ON ac.article_id = a.id
+             WHERE ac.category_id = :category_id
+             ORDER BY a.published_at DESC
              LIMIT :limit'
         );
 
-        $stmt->bindValue('limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':category_id', $categoryId, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
 
         $stmt->execute();
 
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

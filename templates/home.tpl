@@ -8,7 +8,16 @@
     <title>{$title}</title>
 </head>
 <body>
-<h1>{$title}</h1>
-<p>Database OK.</p>
+<h1>Blog</h1>
+
+{foreach $categories as $item}
+    <h2>{$item.category.name}</h2>
+
+    <ul>
+        {foreach $item.articles as $article}
+            <li>{$article.title}</li>
+        {/foreach}
+    </ul>
+{/foreach}
 </body>
 </html>
