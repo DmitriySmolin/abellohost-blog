@@ -19,6 +19,22 @@ class CategoryRepository
             'SELECT * FROM categories ORDER BY name'
         );
 
-        return $stmt->fetchAll();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    public function getById(int $id): ?array
+    {
+        $stmt = $this->connection->prepare(
+            'SELECT *
+         FROM categories
+         WHERE id = :id'
+        );
+
+        $stmt->execute([
+            'id' => $id,
+        ]);
+
+        $category = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $category ?: null;
     }
 }

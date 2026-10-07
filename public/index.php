@@ -11,14 +11,14 @@ use App\Repository\CategoryRepository;
 $connection = Database::getConnection();
 
 $smarty = require __DIR__ . '/../config/smarty.php';
-//
+
 //$smarty->assign('title', 'Working Smarty!');
 //
 //$smarty->display('home.tpl');
 
-
 $categoryRepository = new CategoryRepository($connection);
 $articleRepository = new ArticleRepository($connection);
+
 $categories = $categoryRepository->getAll();
 
 //echo '<pre>';
@@ -44,17 +44,24 @@ $categories = $categoryRepository->getAll();
 $homepageCategories = [];
 
 foreach ($categories as $category) {
+    $categoryId = (int) $category['id'];
+
     $homepageCategories[] = [
         'category' => $category,
         'articles' => $articleRepository->getLatestByCategory(
-            (int) $category['id']
+            $categoryId
         ),
     ];
 }
 
-$smarty->assign(
-    'categories',
-    $homepageCategories
-);
+$smarty->assign('categories', $homepageCategories);
 
 $smarty->display('home.tpl');
+
+echo '<pre>';
+
+print_r(
+    $articleRepository->getById(1)
+);
+
+echo '</pre>';
