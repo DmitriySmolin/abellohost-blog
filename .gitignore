@@ -1,0 +1,24 @@
+# Dependencies
+/vendor/
+
+# Smarty
+/storage/smarty/cache/*
+/storage/smarty/compile/*
+
+!/storage/smarty/cache/.gitkeep
+!/storage/smarty/compile/.gitkeep
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local
