@@ -15,9 +15,14 @@
 
     <ul>
         {foreach $item.articles as $article}
-            <li>{$article.title}</li>
+            <a href="/article.php?id={$article.id}">
+                {$article.title}
+            </a>
         {/foreach}
     </ul>
+    <a href="/category.php?id={$item.category.id}">
+        All articles
+    </a>
 {/foreach}
 </body>
 </html>

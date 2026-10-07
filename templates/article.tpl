@@ -21,7 +21,9 @@
 <ul>
     {foreach $relatedArticles as $item}
         <li>
-            {$item.title}
+            <a href="/article.php?id={$item.id}">
+                {$item.title}
+            </a>
         </li>
     {/foreach}
 </ul>

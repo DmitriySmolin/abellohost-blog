@@ -17,7 +17,9 @@
 </p>
 <hr>
 {foreach $articles as $article}
-    <h3>{$article.title}</h3>
+    <a href="/article.php?id={$article.id}">
+        {$article.title}
+    </a>
     <p>{$article.description}</p>
 {/foreach}
 <hr>
