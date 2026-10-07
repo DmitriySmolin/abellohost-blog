@@ -13,15 +13,6 @@ class CategoryRepository
     ) {
     }
 
-    public function getAll(): array
-    {
-        $stmt = $this->connection->query(
-            'SELECT * FROM categories ORDER BY name'
-        );
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
     public function getWithArticles(): array
     {
         $stmt = $this->connection->query(
