@@ -76,10 +76,20 @@
 - счётчик просмотров;
 - сидинг тестовых данных.
 
+### Стили
+
+Исходные стили находятся в `assets/scss/style.scss`.
+
+Для повторной компиляции:
+```bash
+sass assets/scss/style.scss public/css/style.css
+```
+
 ### Запуск
 
 ```bash
 docker compose up -d --build
 docker compose exec php composer install
-docker compose exec mysql mysql -u root -proot blog < sql/schema.sql
+docker compose exec -T mysql mysql -u root -proot blog < sql/schema.sql
 docker compose exec php php database/seed.php
+```
