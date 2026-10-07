@@ -9,5 +9,6 @@
 </head>
 <body>
 <h1>{$title}</h1>
+<p>Database OK.</p>
 </body>
 </html>
